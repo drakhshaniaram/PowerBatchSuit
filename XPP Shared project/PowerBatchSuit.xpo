@@ -1,0 +1,352 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: JOB
+
+; Microsoft Dynamics AX Job: Run_BatchGroupReponse unloaded
+; --------------------------------------------------------------------------------
+  JOBVERSION 1
+  
+  SOURCE #Run_BatchGroupReponse
+    #static void Run_BatchGroupReponse(Args _args)
+    #{
+    #    info(strFmt("All Batch groups: %1", PowerBatchSuit::getAllBatchGroupsList().toString()));
+    #    info(strFmt("Active ones: %1", PowerBatchSuit::getResponsiveBatchGroupsList().toString()));
+    #}
+  ENDSOURCE
+  PROPERTIES
+    Origin              #{3BD92A7D-0676-4DE5-BC35-61CCB5949DCF}
+  ENDPROPERTIES
+  
+
+***Element: CLS
+
+; Microsoft Dynamics AX Class: PowerBatchSuit unloaded
+; --------------------------------------------------------------------------------
+  CLSVERSION 1
+  
+  CLASS #PowerBatchSuit
+    PROPERTIES
+      Name                #PowerBatchSuit
+      Origin              #{913A5759-CF28-4DE5-A7FD-5C1D825A9356}
+    ENDPROPERTIES
+    
+    METHODS
+      SOURCE #classDeclaration
+        #class PowerBatchSuit
+        #{
+        #}
+      ENDSOURCE
+      SOURCE #checkReponse
+        #private static Set checkReponse(Map _guidOfBatchGroupId, Map _expectedOutputOfGuid)
+        #{
+        #    LogOnDBWebServiceBus     logOnDBWebServiceBus;
+        #    MapEnumerator            guidEnumerator = _guidOfBatchGroupId.getEnumerator();
+        #    MapEnumerator            resultsEnumerator = _expectedOutputOfGuid.getEnumerator();
+        #    guid                     currentGuid, resultGuid;
+        #    str                      currentResult;
+        #    BatchGroupId             currentBatchGroupId;
+        #    Set                      ret = new Set(Types::String);
+        #
+        #    while(guidEnumerator.moveNext())
+        #    {
+        #        currentBatchGroupId = guidEnumerator.currentKey();
+        #        currentGuid = guidEnumerator.currentValue();
+        #
+        #        select * from logOnDBWebServiceBus where logOnDBWebServiceBus.TrackGuid == currentGuid;
+        #
+        #
+        #        while(resultsEnumerator.moveNext())
+        #        {
+        #            resultGuid = resultsEnumerator.currentKey();
+        #            if(currentGuid == resultGuid)
+        #            {
+        #                currentResult = resultsEnumerator.currentValue();
+        #                if(logOnDBWebServiceBus.RecId && logOnDBWebServiceBus.Message == currentResult)
+        #                    ret.add(currentBatchGroupId);
+        #            }
+        #        }
+        #
+        #
+        #    }
+        #
+        #    return ret;
+        #}
+      ENDSOURCE
+      SOURCE #getAllBatchGroupsList
+        #public static Set getAllBatchGroupsList()
+        #{
+        #    BatchGroup      batchGroup;
+        #    Set             ret = new Set(Types::String);
+        #
+        #    while select *
+        #    from batchGroup group by batchGroup.Group
+        #    {
+        #        ret.add(batchGroup.Group);
+        #    }
+        #
+        #    return ret;
+        #}
+      ENDSOURCE
+      SOURCE #getResponsiveBatchGroupsList
+        #public static Set getResponsiveBatchGroupsList()
+        #{
+        #    BatchGroup                              batchGroup;
+        #    Set                                     ret = new Set(Types::String);
+        #    PowerBatchSuit_SampleTaskController     runTaskController;
+        #    PowerBatchSuit_SampleTaskDC             runTaskDataContract;
+        #    BatchGroupId                            currentBatchGroupId;
+        #    guid                                    tGuid;
+        #    int                                     inputA;
+        #    int                                     inputB;
+        #    int                                     correctResult;
+        #    Map                                     guidOfBatchGroupId = new Map(Types::String, Types::Guid);
+        #    Map                                     expectedOutputOfGuid = new Map(Types::Guid, Types::String);
+        #
+        #
+        #    while select *
+        #    from batchGroup group by batchGroup.Group
+        #    {
+        #        inputA = RandomGenerate::construct().randomInt(1, 9);
+        #        inputB = RandomGenerate::construct().randomInt(10, 90);
+        #        correctResult = inputA * inputB;
+        #        tGuid = newGuid();
+        #
+        #        currentBatchGroupId = batchGroup.Group;
+        #
+        #        runTaskController = new PowerBatchSuit_SampleTaskController();
+        #        runTaskController.parmReliableAsyncBatchGroupId(currentBatchGroupId);
+        #        runTaskDataContract = runTaskController.getDataContractObject();
+        #        runTaskDataContract.parmInputNumA(inputA);
+        #        runTaskDataContract.parmInputNumB(inputB);
+        #        runTaskDataContract.parmTGuid(tGuid);
+        #
+        #        guidOfBatchGroupId.insert(currentBatchGroupId, tGuid);
+        #        expectedOutputOfGuid.insert(tGuid, correctResult);
+        #        runTaskController.run();
+        #    }
+        #
+        #    sleep(70000);
+        #
+        #    ret = PowerBatchSuit::checkReponse(guidOfBatchGroupId, expectedOutputOfGuid);
+        #
+        #    return ret;
+        #}
+      ENDSOURCE
+    ENDMETHODS
+  ENDCLASS
+
+***Element: CLS
+
+; Microsoft Dynamics AX Class: PowerBatchSuit_SampleTaskDC unloaded
+; --------------------------------------------------------------------------------
+  CLSVERSION 1
+  
+  CLASS #PowerBatchSuit_SampleTaskDC
+    PROPERTIES
+      Name                #PowerBatchSuit_SampleTaskDC
+      Origin              #{79EF67EC-6476-4D3E-84C4-F6964FF8909F}
+    ENDPROPERTIES
+    
+    METHODS
+      SOURCE #classDeclaration
+        #[DataContractAttribute]
+        #class PowerBatchSuit_SampleTaskDC
+        #{
+        #    int         inputNumA, inputNumB;
+        #    guid        tGuid;
+        #}
+      ENDSOURCE
+      SOURCE #parmInputNumA
+        #[DataMemberAttribute("InputNumA")]
+        #public int parmInputNumA(int _inputNumA = inputNumA)
+        #{
+        #    inputNumA = _inputNumA;
+        #
+        #    return inputNumA;
+        #}
+      ENDSOURCE
+      SOURCE #parmInputNumB
+        #[DataMemberAttribute("InputNumB")]
+        #public int parmInputNumB(int _inputNumB = inputNumB)
+        #{
+        #    inputNumB = _inputNumB;
+        #
+        #    return inputNumB;
+        #}
+      ENDSOURCE
+      SOURCE #parmTGuid
+        #[DataMemberAttribute("TGuid")]
+        #public guid parmTGuid(guid _tGuid = tGuid)
+        #{
+        #    tGuid = _tGuid;
+        #
+        #    return tGuid;
+        #}
+      ENDSOURCE
+    ENDMETHODS
+  ENDCLASS
+
+***Element: CLS
+
+; Microsoft Dynamics AX Class: PowerBatchSuit_SampleTaskController unloaded
+; --------------------------------------------------------------------------------
+  CLSVERSION 1
+  
+  CLASS #PowerBatchSuit_SampleTaskController
+    PROPERTIES
+      Name                #PowerBatchSuit_SampleTaskController
+      Extends             #SysOperationServiceController
+      Origin              #{50E5CD4B-55F1-43A8-9F00-154379CD330E}
+    ENDPROPERTIES
+    
+    METHODS
+      SOURCE #caption
+        #public ClassDescription caption()
+        #{
+        #    return " ---- Testing Batch Groups ---";
+        #}
+      ENDSOURCE
+      SOURCE #classDeclaration
+        #class PowerBatchSuit_SampleTaskController extends SysOperationServiceController
+        #{
+        #}
+      ENDSOURCE
+      SOURCE #new
+        #public void new()
+        #{
+        #    super();
+        #    this.parmClassName(classStr(PowerBatchSuit_SampleTaskService));
+        #    this.parmMethodName(methodStr(PowerBatchSuit_SampleTaskService, RunAvailabilityCheckSubTask));
+        #}
+      ENDSOURCE
+      SOURCE #main
+        #public static void main(Args _args)
+        #{
+        #    PowerBatchSuit_SampleTaskController controller;
+        #
+        #    controller = new PowerBatchSuit_SampleTaskController();
+        #    controller.startOperation();
+        #}
+      ENDSOURCE
+    ENDMETHODS
+  ENDCLASS
+
+***Element: CLS
+
+; Microsoft Dynamics AX Class: PowerBatchSuit_SampleTaskService unloaded
+; --------------------------------------------------------------------------------
+  CLSVERSION 1
+  
+  CLASS #PowerBatchSuit_SampleTaskService
+    PROPERTIES
+      Name                #PowerBatchSuit_SampleTaskService
+      Extends             #SysOperationServiceBase
+      Origin              #{CEB99934-A530-402A-9B23-C002383B2A02}
+    ENDPROPERTIES
+    
+    METHODS
+      SOURCE #classDeclaration
+        #class PowerBatchSuit_SampleTaskService extends SysOperationServiceBase
+        #{
+        #}
+      ENDSOURCE
+      SOURCE #RunAvailabilityCheckSubTask
+        #public void RunAvailabilityCheckSubTask(PowerBatchSuit_SampleTaskDC _dc)
+        #{
+        #    guid            tGuid = _dc.parmTGuid();
+        #    int             numA = _dc.parmInputNumA();
+        #    int             numB = _dc.parmInputNumB();
+        #    str             result = int2str(numA * numB);
+        #
+        #    OKWebServicBus_Logger::write(OKWebServiceBusErr_DC::newFromArgs("Testing BatchGroup", "", "", result), _dc.parmTGuid());
+        #
+        #}
+        #
+      ENDSOURCE
+    ENDMETHODS
+  ENDCLASS
+
+***Element: PRN
+
+; Microsoft Dynamics AX Project : PowerBatchSuit unloaded
+; --------------------------------------------------------------------------------
+  PROJECTVERSION 2
+  
+  PROJECT #PowerBatchSuit
+  SHARED
+  PROPERTIES
+    Name                #PowerBatchSuit
+    Origin              #{BE65E7A1-B391-4DF9-BD23-67920900B38E}
+  ENDPROPERTIES
+  
+    PROJECTCLASS ProjectNode
+    GROUP #Jobs
+      PROPERTIES
+        Name                #Jobs
+        ProjectGroupType    #Jobs
+        GroupMask           #
+        PreventEditProperties #No
+      ENDPROPERTIES
+      
+      BEGINNODE
+        FILETYPE 0
+        UTILTYPE 5
+        UTILOBJECTID 0
+        NODETYPE 215
+        NAME #Run_BatchGroupReponse
+      ENDNODE
+      ENDGROUP
+      
+    GROUP #PowerBatchSuit
+      PROPERTIES
+        Name                #PowerBatchSuit
+        ProjectGroupType    #All
+        GroupMask           #
+        PreventEditProperties #No
+      ENDPROPERTIES
+      
+      GROUP #BatchGroupTestSuit
+        PROPERTIES
+          Name                #BatchGroupTestSuit
+          ProjectGroupType    #All
+          GroupMask           #
+          PreventEditProperties #No
+        ENDPROPERTIES
+        
+        BEGINNODE
+          FILETYPE 0
+          UTILTYPE 45
+          UTILOBJECTID 1027426
+          NODETYPE 329
+          NAME #PowerBatchSuit
+        ENDNODE
+        BEGINNODE
+          FILETYPE 0
+          UTILTYPE 45
+          UTILOBJECTID 1027428
+          NODETYPE 329
+          NAME #PowerBatchSuit_SampleTaskDC
+        ENDNODE
+        BEGINNODE
+          FILETYPE 0
+          UTILTYPE 45
+          UTILOBJECTID 1027427
+          NODETYPE 329
+          NAME #PowerBatchSuit_SampleTaskController
+        ENDNODE
+        BEGINNODE
+          FILETYPE 0
+          UTILTYPE 45
+          UTILOBJECTID 1027429
+          NODETYPE 329
+          NAME #PowerBatchSuit_SampleTaskService
+        ENDNODE
+        ENDGROUP
+        
+      ENDGROUP
+      
+  ENDPROJECT
+  
+
+***Element: END
