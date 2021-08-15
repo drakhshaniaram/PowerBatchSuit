@@ -70,7 +70,7 @@ public static Set getResponsiveBatchGroupsList()
     int                                     correctResult;
     Map                                     guidOfBatchGroupId = new Map(Types::String, Types::Guid);
     Map                                     expectedOutputOfGuid = new Map(Types::Guid, Types::String);
-
+    ;
 
     while select *
     from batchGroup group by batchGroup.Group
