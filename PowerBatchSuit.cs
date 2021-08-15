@@ -5,6 +5,7 @@
 /// </summary>
 class PowerBatchSuit
 {
+    #define.SleepEnough(70000)
 }
 
 private static Set checkReponse(Map _guidOfBatchGroupId, Map _expectedOutputOfGuid)
@@ -93,7 +94,7 @@ public static Set getResponsiveBatchGroupsList()
         runTaskController.run();
     }
 
-    sleep(70000);
+    sleep(#SleepEnough);
 
     ret = PowerBatchSuit::checkReponse(guidOfBatchGroupId, expectedOutputOfGuid);
 

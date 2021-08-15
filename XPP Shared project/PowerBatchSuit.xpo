@@ -35,6 +35,7 @@ Formatversion: 1
       SOURCE #classDeclaration
         #class PowerBatchSuit
         #{
+        #    #define.SleepEnough(70000)
         #}
       ENDSOURCE
       SOURCE #checkReponse
@@ -126,7 +127,7 @@ Formatversion: 1
         #        runTaskController.run();
         #    }
         #
-        #    sleep(70000);
+        #    sleep(#SleepEnough);
         #
         #    ret = PowerBatchSuit::checkReponse(guidOfBatchGroupId, expectedOutputOfGuid);
         #
