@@ -205,12 +205,13 @@ Formatversion: 1
       SOURCE #caption
         #public ClassDescription caption()
         #{
-        #    return " ---- Testing Batch Groups ---";
+        #    return #BatchJobCaption;
         #}
       ENDSOURCE
       SOURCE #classDeclaration
         #class PowerBatchSuit_SampleTaskController extends SysOperationServiceController
         #{
+        #    #define.BatchJobCaption(" ---- Testing Batch Groups ---")
         #}
       ENDSOURCE
       SOURCE #new
