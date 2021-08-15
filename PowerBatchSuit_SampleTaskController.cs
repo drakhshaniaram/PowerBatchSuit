@@ -1,10 +1,11 @@
 class PowerBatchSuit_SampleTaskController extends SysOperationServiceController
 {
+    #define.BatchJobCaption(" ---- Testing Batch Groups ---")
 }
 
 public ClassDescription caption()
 {
-    return " ---- Testing Batch Groups ---";
+    return #BatchJobCaption;
 }
 
 public void new()
