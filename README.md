@@ -30,4 +30,4 @@ static void Run_BatchGroupsTest(Args _args)
 2. Open the `PowerBatchSuit` project
 3. Run the `Run_BatchGroupsTest` job 
 4. Wait for about 1 minute for the result, without worring about the environment gets freezed ;) . Because this technique uses a synchrounous call to all the batchgroups, it needs at least 1 minute to get run.
-5. Analyze the result in the infolog and double-check with `System administration/Inquiries/Batch jobs` and `System administration/Inquiries/Batch job history`
+5. Analyze the result in the infolog and double-check with `System administration > Inquiries > Batch jobs > Batch jobs` and `System administration > Inquiries > Batch jobs > Batch job history.`
