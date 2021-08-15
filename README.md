@@ -23,3 +23,10 @@ static void Run_BatchGroupsTest(Args _args)
     info(strFmt("Active ones: %1", activeBatchGroups));
 }
 ```
+
+# How to use
+1. Download the `XPP Shared project\PowerBatchSuit.xpo`
+2. Import the .xpo file into a running AX environment
+2. Open the `PowerBatchSuit` project
+3. Run the `Run_BatchGroupsTest` job 
+4. Wait for about 1 minute for the result, without worring about the environment gets freezing ;) . Because this technique uses a synchrounous call to all th batchgroups, in needs at least 1 minute to get run.
