@@ -30,4 +30,8 @@ static void Run_BatchGroupsTest(Args _args)
 2. Open the `PowerBatchSuit` project
 3. Run the `Run_BatchGroupsTest` job 
 4. Wait for about 1 minute for the result, without worring about the environment gets freezed ;) . Because this technique uses a synchrounous call to all the batchgroups, it needs at least 1 minute to get run.
-5. Analyze the result in the infolog and double-check with `System administration > Inquiries > Batch jobs > Batch jobs` and `System administration > Inquiries > Batch jobs > Batch job history.`
+5. Analyze the result in the infolog and double-check with AX; 
+   - Check `System administration > Inquiries > Batch jobs > Batch job history.` for successfully running batch-groups
+   - Check `System administration > Inquiries > Batch jobs > Batch jobs` for stuck batch-jobs.
+     - Waiting : the batch-group may be inaccesible, stopped, or locked
+     - Executing : the batch-group may be under a heavy load, or in shortage of RAM, I/O, Processing power
