@@ -8,6 +8,10 @@
 * Extensibility: using SysOperationFramework
 * Quick response: you can have the result in almost 1 minute
 
+## Prerequisites
+Import `PowerLogegr` project before you try to use it.
+https://github.com/drakhshaniaram/PowerLogger
+
 ## Running job
 ```csharp
 static void Run_BatchGroupsTest(Args _args)
